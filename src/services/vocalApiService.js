@@ -3,7 +3,7 @@ import { checkExistEnglish } from './checkExistService'
 
 const readFunc = async () => {
     try {
-        let vocals = await db.Vocal.findAll({
+        let vocals = await db.Vocals.findAll({
             attributes: ['id', "en", "vn", "spelling", 'example_en', 'example_vn', 'levelId'],
             order: [["id", "DESC"]],
             raw: true,
@@ -45,7 +45,7 @@ const createFunc = async (rawData) => {
             }
         }
 
-        let currentVocals = await db.Vocal.findAll({
+        let currentVocals = await db.Vocals.findAll({
             attributes: ['en'],
             raw: true
         })
@@ -54,13 +54,13 @@ const createFunc = async (rawData) => {
 
         if (persist && persist.length === 0) {
             return {
-                EM: "Vocal created error..!",
+                EM: "Vocals created error..!",
                 EC: 2,
                 DT: []
             }
         }
 
-        await db.Vocal.bulkCreate(persist)
+        await db.Vocals.bulkCreate(persist)
         return {
             EM: `Create ${persist.length} vocalbulary oke!`,
             EC: 0,
@@ -85,7 +85,7 @@ const updateVocal = async (data) => {
                 DT: 'levelId'
             }
         } 
-        let vocal = await db.Vocal.findOne({
+        let vocal = await db.Vocals.findOne({
             where: { id: data.id }
         })
         if (vocal) {
@@ -99,7 +99,7 @@ const updateVocal = async (data) => {
                 levelId: data.levelId
             })
             return {
-                EM: 'Update Vocal oke..!',
+                EM: 'Update Vocals oke..!',
                 EC: 0,
                 DT: ''
             }
@@ -107,7 +107,7 @@ const updateVocal = async (data) => {
             // not found
             console.log(error)
             return {
-                EM: 'Update Vocal not found!',
+                EM: 'Update Vocals not found!',
                 EC: 2,
                 DT: ''
             }
@@ -125,7 +125,7 @@ const updateVocal = async (data) => {
 
 const deleteVocal = async (id) => {
     try {
-        let vocal = await db.Vocal.findOne({
+        let vocal = await db.Vocals.findOne({
             where: { id: id }
         })
         if (vocal) {
@@ -137,7 +137,7 @@ const deleteVocal = async (id) => {
             }
         } else {
             return {
-                EM: "Vocal not exits",
+                EM: "Vocals not exits",
                 EC: 2,
                 DT: []
             }
@@ -153,7 +153,7 @@ const deleteVocal = async (id) => {
 }
 
 const checkExistUserVocal = async (data) => {
-    let check = await db.User_Vocal.findOne({
+    let check = await db.UserVocals.findOne({
         where: { userId: data.userId, vocalId: data.vocalId  }
     })
     if (check) return true
@@ -169,7 +169,7 @@ const assignVocalToUser = async (data) => {
                 DT: '',
             }
         }
-        await db.User_Vocal.create(data)
+        await db.UserVocals.create(data)
         return {
             EM: `assign vocal to user oke!`,
             EC: 0,
@@ -187,7 +187,7 @@ const assignVocalToUser = async (data) => {
 
 const getVocalByUser = async () => {
     try {
-        let vocalByUser = await db.User_Vocal.findAll({
+        let vocalByUser = await db.UserVocals.findAll({
             attributes: ['userId', 'vocalId'],
             raw: true,
             nest: true

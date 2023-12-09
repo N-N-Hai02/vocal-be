@@ -3,9 +3,9 @@ import { hashUserPassword, checkEmailExist, checkPhoneExist} from './loginRegist
 
 const getAllUser = async () => {
     try {
-        let users = await db.User.findAll({
+        let users = await db.Users.findAll({
             attributes: ['id', "username", "email", "phone", 'sex'],
-            include: { model: db.Group, attributes: ["name", "description"] },
+            include: { model: db.Groups, attributes: ["name", "description"] },
         })
         if (users) {
             return {
@@ -31,15 +31,20 @@ const getAllUser = async () => {
 }
 
 const getUserWithPagination = async (page, limit) => {
+    console.log("check page, limit: ", page, limit);
+
     try {
         let offset = (page - 1) * limit
-        const { count, rows } = await db.User.findAndCountAll({
+        const { count, rows } = await db.Users.findAndCountAll({
             attributes: ["id", "username", "email", "phone", "sex", "address"],
-            include: { model: db.Group, attributes: ["id","name", "description"]},
+            include: { model: db.Groups, attributes: ["id","name", "description"]},
             order: [["id", "DESC"]],
             offset: offset,
-            limit: limit
+            limit: limit,
+            raw: true,
+            nest: true
         })
+
         let totalPages = Math.ceil(count / limit)
         let data = {
             totalRows: count,
@@ -82,7 +87,7 @@ const createNewUser = async (rawData) => {
          }
          // hash user password
          let hashPassword = hashUserPassword(rawData.password)
-        await db.User.create({
+        await db.Users.create({
             ...rawData,
             password: hashPassword
         })
@@ -110,7 +115,7 @@ const updateUser = async (data) => {
                 DT: 'group'
             }
         } 
-        let user = await db.User.findOne({
+        let user = await db.Users.findOne({
             where: { id: data.id }
         })
         if (user) {
@@ -147,7 +152,7 @@ const updateUser = async (data) => {
 }
 const deleteUser = async (id) => {
     try {
-        let user = await db.User.findOne({
+        let user = await db.Users.findOne({
             where: { id: id }
         })
         if (user) {
@@ -159,7 +164,7 @@ const deleteUser = async (id) => {
             }
         } else {
             return {
-                EM: "User not exits",
+                EM: "Users not exits",
                 EC: 2,
                 DT: []
             }

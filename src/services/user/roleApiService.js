@@ -2,7 +2,7 @@ import db from '../../models'
 
 const getAllRole = async () => {
     try {
-        let roles = await db.Role.findAll({
+        let roles = await db.Roles.findAll({
             order: [["id", "DESC"]],
         })
         if (roles) {
@@ -24,7 +24,7 @@ const getAllRole = async () => {
 
 const createNewRole = async (roles) => {
     try {
-        let currentRoles = await db.Role.findAll({
+        let currentRoles = await db.Roles.findAll({
             attributes: ['url', 'description'],
             raw: true
         })
@@ -32,12 +32,12 @@ const createNewRole = async (roles) => {
 
         if (persist && persist.length === 0) {
             return {
-                EM: "Role created error..!",
+                EM: "Roles created error..!",
                 EC: 2,
                 DT: []
             }
         }
-        await db.Role.bulkCreate(persist)
+        await db.Roles.bulkCreate(persist)
         return {
             EM: `Create ${persist.length} role oke!`,
             EC: 0,
@@ -55,7 +55,7 @@ const createNewRole = async (roles) => {
 
 const updateRole = async (data) => {
     try {
-        let role = await db.Role.findOne({
+        let role = await db.Roles.findOne({
             where: { id: data.id }
         })
         if (role) {
@@ -91,7 +91,7 @@ const updateRole = async (data) => {
 
 const deleteRole = async (id) => {
     try {
-        let role = await db.Role.findOne({
+        let role = await db.Roles.findOne({
             where: { id: id }
         })
         if (role) {
@@ -103,7 +103,7 @@ const deleteRole = async (id) => {
             }
         } else {
             return {
-                EM: "Role not exits",
+                EM: "Roles not exits",
                 EC: 2,
                 DT: []
             }
@@ -128,20 +128,33 @@ const getRoleByGroup = async (id) => {
             }
         }
 
-        let roles = await db.Group.findOne({
+        let roles = await db.Groups.findAll({
             where: { id: id },
             attributes: ["id", "name", "description"],
             include: { 
-                model: db.Role, 
+                model: db.Roles, 
                 attributes: ["id","url", "description"],
                 through: { attributes: [] }
             },
+            raw: true,
+            nest: true
         })
+
+        let filterGroup = roles.find((item) => item.id === +id)        
+        let filteRoles = roles.reduce((accumulator, currentValue) => {
+            accumulator.push(currentValue.Roles)
+            return accumulator
+        }, [])
+
+        let dataGroupWithRoles = {
+            ...filterGroup,
+            Roles: filteRoles
+        }
 
         return {
             EM: "Get roles by group successds!",
             EC: 0,
-            DT: roles
+            DT: dataGroupWithRoles
         }
     } catch (error) {
         console.log(error)
@@ -155,10 +168,10 @@ const getRoleByGroup = async (id) => {
 
 const assignRoleToGroup = async (data) => {
     try {
-        await db.Group_Role.destroy({
+        await db.GroupRoles.destroy({
             where: { groupId: +data.groupId }
         })
-        await db.Group_Role.bulkCreate(data.groupRoles)
+        await db.GroupRoles.bulkCreate(data.groupRoles)
         return {
             EM: "Assgin to group successds!",
             EC: 0,

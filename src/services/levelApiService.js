@@ -2,7 +2,7 @@ import db from '../models'
 
 const readFunc = async () => {
     try {
-        let levels = await db.Level.findAll({
+        let levels = await db.Levels.findAll({
             attributes: ['id', "name", "description"],
             raw: true,
             nest: true
@@ -26,7 +26,7 @@ const readFunc = async () => {
 
 const createNewLevel = async (levels) => {
     try {
-        let currentLevels = await db.Level.findAll({
+        let currentLevels = await db.Levels.findAll({
             attributes: ['name', 'description'],
             raw: true
         })
@@ -34,12 +34,12 @@ const createNewLevel = async (levels) => {
 
         if (persist && persist.length === 0) {
             return {
-                EM: "Level created error..!",
+                EM: "Levels created error..!",
                 EC: 2,
                 DT: []
             }
         }
-        await db.Level.bulkCreate(persist)
+        await db.Levels.bulkCreate(persist)
         return {
             EM: `Create ${persist.length} level oke!`,
             EC: 0,
@@ -57,7 +57,7 @@ const createNewLevel = async (levels) => {
 
 const updateRole = async (data) => {
     try {
-        let level = await db.Level.findOne({
+        let level = await db.Levels.findOne({
             where: { id: data.id }
         })
         if (level) {
@@ -93,7 +93,7 @@ const updateRole = async (data) => {
 
 const deleteRole = async (id) => {
     try {
-        let level = await db.Level.findOne({
+        let level = await db.Levels.findOne({
             where: { id: id }
         })
         if (level) {
@@ -105,7 +105,7 @@ const deleteRole = async (id) => {
             }
         } else {
             return {
-                EM: "Level not exits",
+                EM: "Levels not exits",
                 EC: 2,
                 DT: []
             }

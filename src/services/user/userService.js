@@ -13,7 +13,7 @@ const hashUserPassword = (userPass) => {
 const createNewUser = async (email, password, username) => {
     let hashPass = hashUserPassword(password)
     try {
-        await db.User.create({
+        await db.Users.create({
             email: email,
             password: hashPass,
             username: username
@@ -25,18 +25,18 @@ const createNewUser = async (email, password, username) => {
 
 const getUserList = async () => {
     // test relationships
-        // let newUser = await db.User.findOne({
+        // let newUser = await db.Users.findOne({
         //     where: { id: 1 },
         //     attributes: ['id', "username", "email"],
-        //     include: { model: db.Group, attributes: ["name", "description"] },
+        //     include: { model: db.Groups, attributes: ["name", "description"] },
         //     raw: true,
         //     nest: true
         // })
 
-        // let roles = await db.Role.findAll({
+        // let roles = await db.Roles.findAll({
         //     // attributes: ["url", "description"],
         //     include: { 
-        //         model: db.Group, 
+        //         model: db.Groups, 
         //         where: { id: 1 }, 
         //         // attributes: ["name"]
         //     },
@@ -48,7 +48,7 @@ const getUserList = async () => {
         // console.log(">>>>>> check new roles: ", roles);
 
     let users = []
-    users = await db.User.findAll()
+    users = await db.Users.findAll()
     return users
     // const connection = await mysql.createConnection({host: 'localhost',user: 'root',database: 'jwt', Promise: bluebird})
     // try {
@@ -60,7 +60,7 @@ const getUserList = async () => {
 }
 
 const deleteUser = async (userId) => {
-    await db.User.destroy({
+    await db.Users.destroy({
         where: { id: userId }
     })
 
@@ -73,7 +73,7 @@ const deleteUser = async (userId) => {
 }
 const getUserById = async (userId) => {
     let user = {}
-    user = await db.User.findOne({ where: { id: userId } })
+    user = await db.Users.findOne({ where: { id: userId } })
     return user
     // const connection = await mysql.createConnection({host: 'localhost',user: 'root',database: 'jwt', Promise: bluebird})
     // try {
@@ -85,7 +85,7 @@ const getUserById = async (userId) => {
 }
 
 const updateUserInfo = async (email, username, id) => {
-    await db.User.update(
+    await db.Users.update(
         { email: email, username: username }, 
         {
             where: {id: id},

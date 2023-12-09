@@ -2,7 +2,7 @@ import db from '../../models';
 
 const getGroups = async () => {
     try {
-        let data = await db.Group.findAll({
+        let data = await db.Groups.findAll({
             order: [
                 ['name', 'ASC']
             ]

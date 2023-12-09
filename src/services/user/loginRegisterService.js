@@ -13,7 +13,7 @@ const hashUserPassword = (userPass) => {
 }
 
 const checkEmailExist = async (userEmail) => {
-    let user = await db.User.findOne({
+    let user = await db.Users.findOne({
         where: { email: userEmail }
     })
 
@@ -25,7 +25,7 @@ const checkEmailExist = async (userEmail) => {
 }
 
 const checkPhoneExist = async (userPhone) => {
-    let user = await db.User.findOne({
+    let user = await db.Users.findOne({
         where: { phone: userPhone }
     })
 
@@ -68,7 +68,7 @@ const registerNewUser = async (rawUserData) => {
         }
 
         // create new user
-        await db.User.create({
+        await db.Users.create({
             email: rawUserData.email,
             username: rawUserData.username,
             phone: rawUserData.phone,
@@ -97,7 +97,7 @@ const checkPassword = (inputPassword, hashPassword) => {
 
 const handleUserLogin = async (rawData) => {
     try {
-        let user = await db.User.findOne({
+        let user = await db.Users.findOne({
             where: {
                 [Op.or]: [
                     { email: rawData.valueLogin }, 
@@ -105,13 +105,25 @@ const handleUserLogin = async (rawData) => {
                 ]
               }
         })
+
         if (user) {
             let isCorrectPassword = checkPassword(rawData.password, user.password)
             if (isCorrectPassword === true) {
                 let groupWithRoles = await getGroupWithRoles(user);
+                let group = groupWithRoles.find((item) => item.id === user.groupId)
+                let roles = groupWithRoles.reduce((accumulator, currentValue) => {
+                    accumulator.push(currentValue.Roles)
+                    return accumulator
+                }, [])
+
+                let dataGroupWithRoles = {
+                    ...group,
+                    Roles: roles
+                }
+
                 let payload = {
                     email: user.email,
-                    groupWithRoles,
+                    groupWithRoles: dataGroupWithRoles,
                     username: user.username
                 }
                 let token = createJWT(payload)
@@ -120,7 +132,7 @@ const handleUserLogin = async (rawData) => {
                     EC: 0,
                     DT: {
                         access_token: token,
-                        groupWithRoles,
+                        groupWithRoles: dataGroupWithRoles,
                         email: user.email,
                         username: user.username
                     }
