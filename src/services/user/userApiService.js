@@ -120,12 +120,12 @@ const updateUser = async (data) => {
         })
         if (user) {
             // update
-            await user.update({
+            await db.Users.update({
                 username: data.username,
                 address: data.address,
                 sex: data.sex,
                 groupId: data.groupId
-            })
+            }, {where: { id: data.id }})
             return {
                 EM: 'Update user oke..!',
                 EC: 0,
@@ -156,7 +156,7 @@ const deleteUser = async (id) => {
             where: { id: id }
         })
         if (user) {
-            await user.destroy();
+            await db.Users.destroy({where: { id: id }})
             return {
                 EM: "Delete user successfully!",
                 EC: 0,

@@ -55,17 +55,17 @@ const createNewLevel = async (levels) => {
     }
 }
 
-const updateRole = async (data) => {
+const updateLevel = async (data) => {
     try {
         let level = await db.Levels.findOne({
             where: { id: data.id }
         })
         if (level) {
             // update
-            await level.update({
+            await db.Levels.update({
                 name: data.name,
                 description: data.description,
-            })
+            }, {where: { id: data.id }})
             return {
                 EM: 'Update level oke..!',
                 EC: 0,
@@ -91,13 +91,13 @@ const updateRole = async (data) => {
     }
 }
 
-const deleteRole = async (id) => {
+const deleteLevel = async (id) => {
     try {
         let level = await db.Levels.findOne({
             where: { id: id }
         })
         if (level) {
-            await level.destroy();
+            await db.Levels.destroy({ where: { id: id }})
             return {
                 EM: "Delete level successfully!",
                 EC: 0,
@@ -121,6 +121,6 @@ const deleteRole = async (id) => {
 }
 
 module.exports = {
-    readFunc, createNewLevel, updateRole,
-    deleteRole
+    readFunc, createNewLevel, updateLevel,
+    deleteLevel
 }

@@ -36,7 +36,7 @@ const crateFunc = async (req , res) => {
 
 const updateFunc = async (req, res) => {
     try {
-        let data = await levelApiService.updateRole(req.body)
+        let data = await levelApiService.updateLevel(req.body)
         return res.status(200).json({
             EM: data.EM, // error message
             EC: data.EC, // error code
@@ -52,7 +52,7 @@ const updateFunc = async (req, res) => {
 }
 const deleteFunc = async (req, res) => {
     try {
-        let data = await levelApiService.deleteRole(req.body.id)
+        let data = await levelApiService.deleteLevel(req.body.id)
         return res.status(200).json({
             EM: data.EM, // error message
             EC: data.EC, // error code

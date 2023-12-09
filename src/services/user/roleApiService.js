@@ -60,10 +60,10 @@ const updateRole = async (data) => {
         })
         if (role) {
             // update
-            await role.update({
+            await db.Roles.update({
                 url: data.url,
                 description: data.description,
-            })
+            }, {where: { id: data.id }})
             return {
                 EM: 'Update role oke..!',
                 EC: 0,
@@ -95,7 +95,7 @@ const deleteRole = async (id) => {
             where: { id: id }
         })
         if (role) {
-            await role.destroy();
+            await db.Roles.destroy({where: { id: id }})
             return {
                 EM: "Delete role successfully!",
                 EC: 0,

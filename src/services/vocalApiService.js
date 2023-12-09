@@ -88,20 +88,28 @@ const updateVocal = async (data) => {
         let vocal = await db.Vocals.findOne({
             where: { id: data.id }
         })
+
+        let updateValues = {
+            en: data.en,
+            vn: data.vn,
+            spelling: data.spelling,
+            example_en: data.example_en,
+            example_vn: data.example_vn,
+            levelId: data.levelId
+        }
+
         if (vocal) {
             // update
-            await vocal.update({
-                en: data.en,
-                vn: data.vn,
-                spelling: data.spelling,
-                example_en: data.example_en,
-                example_vn: data.example_vn,
-                levelId: data.levelId
-            })
-            return {
-                EM: 'Update Vocals oke..!',
-                EC: 0,
-                DT: ''
+            let resultUpdate = await db.Vocals.update(updateValues, { where: { id: data.id }})
+            if (resultUpdate[0] === 1) {
+                console.log("Success Update: ", resultUpdate)
+                return {
+                    EM: 'Update Vocals oke..!',
+                    EC: 0,
+                    DT: ''
+                }
+            } else {
+                console.log("Error Update: ", resultUpdate)
             }
         } else {
             // not found
@@ -129,7 +137,7 @@ const deleteVocal = async (id) => {
             where: { id: id }
         })
         if (vocal) {
-            await vocal.destroy();
+            await db.Vocals.destroy({where: { id: id }})
             return {
                 EM: "Delete vocal successfully!",
                 EC: 0,
