@@ -46,9 +46,19 @@ const handleApiRegister = async (req, res) => {
 const handleApiLogin = async (req, res) => {
     try {
         let data = await loginRegisterService.handleUserLogin(req.body)
-        if (data && data.DT && data.DT.access_token) {
+        // if (data && data.DT && data.DT.access_token) {
+        //     res.cookie("jwt", data.DT.access_token, { httpOnly: true, maxAge: 60 * 60 * 1000 })
+        // }
+        var cookie = req.cookies.cookieName;
+        if (cookie === undefined && data && data.DT && data.DT.access_token) {
+            // no: set a new cookie
             res.cookie("jwt", data.DT.access_token, { httpOnly: true, maxAge: 60 * 60 * 1000 })
-        }
+            console.log('cookie created successfully')
+        } else {
+            // yes, cookie was already present 
+            console.log('cookie exists', cookie)
+        } 
+        
         return res.status(200).json({
             EM: data.EM, // error message
             EC: data.EC, // error code
