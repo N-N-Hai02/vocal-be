@@ -41,6 +41,8 @@ const checkUserJWT = (req, res, next) => {
     let cookies = req.cookies;
     let tokenFromHeader = extractToken(req)
 
+    console.log("check JWTAction req: ", tokenFromHeader)
+
     if ((cookies && cookies.jwt) || tokenFromHeader) {
         let token = cookies && cookies.jwt ? cookies.jwt : tokenFromHeader
         let decoded = verifyToken(token)
