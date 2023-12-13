@@ -67,7 +67,7 @@ const handleApiLogin = async (req, res) => {
 
 const handleApiLogout = async (req, res) => {
     try {
-        res.clearCookie("jwt")
+        res.clearCookie("jwt" , { secure: true, httpOnly: true, sameSite: 'none' })
         return res.status(200).json({
             EM: "Clear cookies done!", // error message
             EC: 0, // error code
