@@ -150,13 +150,22 @@ const updateUser = async (data) => {
         }
     }
 }
-const deleteUser = async (id) => {
+
+const checkIsNotAllowedToDelete = async (userCurrentlyLogged, userDeleteId) => {
+    let user = await db.Users.findOne({
+        where: { id: userDeleteId }
+    })
+
+    if (userCurrentlyLogged === user.email) return false
+
+    return true
+}
+
+const deleteUser = async (userCurrentlyLogged, userDeleteId) => {
     try {
-        let user = await db.Users.findOne({
-            where: { id: id }
-        })
-        if (user) {
-            await db.Users.destroy({where: { id: id }})
+        let checkDelete = await checkIsNotAllowedToDelete(userCurrentlyLogged, userDeleteId)
+        if (checkDelete) {
+            await db.Users.destroy({where: { id: userDeleteId }})
             return {
                 EM: "Delete user successfully!",
                 EC: 0,
@@ -164,7 +173,7 @@ const deleteUser = async (id) => {
             }
         } else {
             return {
-                EM: "Users not exits",
+                EM: "Deleted is not allowed..!",
                 EC: 2,
                 DT: []
             }
