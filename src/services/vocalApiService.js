@@ -4,7 +4,7 @@ import { checkExistEnglish } from './checkExistService'
 const readFunc = async () => {
     try {
         let vocals = await db.Vocals.findAll({
-            attributes: ['id', "en", "vn", "spelling", 'example_en', 'example_vn', 'levelId'],
+            attributes: ['id', "en", "vn", "spelling", 'pronunciation', 'example_en', 'example_vn', 'levelId'],
             order: [["id", "DESC"]],
             raw: true,
             nest: true

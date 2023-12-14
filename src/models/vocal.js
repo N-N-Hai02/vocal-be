@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     en: DataTypes.STRING,
     vn: DataTypes.STRING,
     spelling: DataTypes.STRING,
+    pronunciation: DataTypes.STRING,
     example_en: DataTypes.STRING,
     example_vn: DataTypes.STRING,
     levelId: DataTypes.INTEGER

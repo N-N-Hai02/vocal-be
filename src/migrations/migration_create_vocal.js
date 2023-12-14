@@ -17,6 +17,9 @@ module.exports = {
       spelling: {
         type: Sequelize.STRING
       },
+      pronunciation: {
+        type: Sequelize.STRING
+      },
       example_en: {
         type: Sequelize.STRING
       },
