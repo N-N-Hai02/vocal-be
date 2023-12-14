@@ -93,6 +93,7 @@ const updateVocal = async (data) => {
             en: data.en,
             vn: data.vn,
             spelling: data.spelling,
+            pronunciation: data.pronunciation,
             example_en: data.example_en,
             example_vn: data.example_vn,
             levelId: data.levelId
