@@ -1,7 +1,7 @@
 import db from '../models/index'
 import { checkExistEnglish } from './checkExistService'
 
-const readFunc = async () => {
+const getAllVocal = async () => {
     try {
         let vocals = await db.Vocals.findAll({
             attributes: ['id', "en", "vn", "spelling", 'pronunciation', 'example_en', 'example_vn', 'levelId'],
@@ -20,6 +20,43 @@ const readFunc = async () => {
                 EM: "Get don't data success",
                 EC: 0,
                 DT: []
+            }
+        }
+    } catch (error) {
+        console.log(error)
+        return {
+            EM: "Something wrongs with vocal service",
+            EC: 1,
+            DT: []
+        }
+    }
+}
+const getVocalWithPagination = async (page, limit, levelId) => {
+    try {
+        let offset = (page - 1) * limit
+
+        const { count, rows } = await db.Vocals.findAndCountAll({
+            where: { levelId: levelId },
+            attributes: ['id', "en", "vn", "spelling", 'pronunciation', 'example_en', 'example_vn', 'levelId'],
+            order: [["id", "ASC"]],
+            offset: offset,
+            limit: limit,
+            raw: true,
+            nest: true
+        })
+
+        let totalPages = Math.ceil(count / limit)
+        let data = {
+            totalRows: count,
+            totalPages: totalPages,
+            vocals: rows
+        }
+
+        if (data) {
+            return {
+                EM: "Get vocal data success..!",
+                EC: 0,
+                DT: data
             }
         }
     } catch (error) {
@@ -219,5 +256,11 @@ const getVocalByUser = async () => {
 }
 
 module.exports = {
-    readFunc, createFunc, updateVocal, deleteVocal, assignVocalToUser, getVocalByUser
+    getAllVocal,
+    getVocalWithPagination, 
+    createFunc, 
+    updateVocal, 
+    deleteVocal, 
+    assignVocalToUser,
+    getVocalByUser
 }
