@@ -50,7 +50,7 @@ const checkUserJWT = (req, res, next) => {
             req.user = decoded
             req.token = token
             next()
-        } else if (cookies['next-auth.session-token']) {
+        } else if (cookies[process.env.NAME_TOKEN_GOOGLE]) {
             next()
         } else {
             return res.status(401).json({
@@ -94,7 +94,7 @@ const checkUserPermission = async (req, res, next) => {
                 DT: ''
             })
         }
-    } else if (req.cookies['next-auth.session-token']) {
+    } else if (req.cookies[process.env.NAME_TOKEN_GOOGLE]) {
         let getGroupVSRoles = await getGroupWithRoles({ groupId: 3 })
 
         let getRoles = getGroupVSRoles.reduce((accumulator, currentValue) => {
