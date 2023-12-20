@@ -101,10 +101,10 @@ const getUserAccount = async (req, res) => {
         EM: 'ok', // error message
         EC: 0, // error code
         DT: {
-            access_token: req.token,
-            groupWithRoles: req.user.groupWithRoles,
-            email: req.user.email,
-            username: req.user.username
+            access_token: req?.token,
+            groupWithRoles: req.user?.groupWithRoles,
+            email: req.user?.email,
+            username: req.user?.username
         },
     })
 }

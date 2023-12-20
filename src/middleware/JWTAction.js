@@ -1,7 +1,9 @@
 require("dotenv").config()
 import jwt from 'jsonwebtoken'
+import { getGroupWithRoles } from '../services/user/JWTService'
+import _ from 'lodash'
 
-const nonSecurePaths = ['/user/logout', '/user/login', '/user/register'];
+const nonSecurePaths = ['/user/logout', '/user/login', '/user/register']
 
 const createJWT = (payload) => {
     let key = process.env.JWT_SECRET
@@ -48,6 +50,8 @@ const checkUserJWT = (req, res, next) => {
             req.user = decoded
             req.token = token
             next()
+        } else if (cookies['next-auth.session-token']) {
+            next()
         } else {
             return res.status(401).json({
                 EM: 'Not authentication the user',
@@ -64,9 +68,9 @@ const checkUserJWT = (req, res, next) => {
     }
 }
 
-const checkUserPermission = (req, res, next) => {
+const checkUserPermission = async (req, res, next) => {
     // if (nonSecurePaths.includes(req.path) || req.path === '/user/account' || req.path === '/vocalbulary/List' || req.path === '/admin/vocal/read') return next();
-    if (nonSecurePaths.includes(req.path) || req.path === '/user/account') return next();
+    if (nonSecurePaths.includes(req.path) || req.path === '/user/account') return next()
 
     if (req.user) {
         // let email = req.user.email
@@ -75,11 +79,40 @@ const checkUserPermission = (req, res, next) => {
         if (!roles || roles.length === 0) {
             return res.status(403).json({
                 EM: `You dont't permission to access this resource...`,
-                EC: -1,
+                EC: -3,
                 DT: ''
             })
         }
+
         let canAccess = roles.some(item => item.url === currentUrl || currentUrl.includes(item.url))
+        if (canAccess === true) {
+            next()
+        } else {
+            return res.status(403).json({
+                EM: `You dont't permission to access this resource...`,
+                EC: -2,
+                DT: ''
+            })
+        }
+    } else if (req.cookies['next-auth.session-token']) {
+        let getGroupVSRoles = await getGroupWithRoles({ groupId: 3 })
+
+        let getRoles = getGroupVSRoles.reduce((accumulator, currentValue) => {
+            accumulator.push(currentValue.Roles)
+            return accumulator
+        }, [])
+
+        let currentUrl = req.path
+        if (!getRoles || getRoles.length === 0) {
+            return res.status(403).json({
+                EM: `You dont't permission to access this resource...`,
+                EC: -3,
+                DT: ''
+            })
+        }
+
+        let canAccess = getRoles.some(item => item.url === currentUrl || currentUrl.includes(item.url))
+
         if (canAccess === true) {
             next()
         } else {
@@ -96,6 +129,69 @@ const checkUserPermission = (req, res, next) => {
             DT: ''
         })
     }
+
+    // if (req.user || req.cookies['next-auth.session-token']) {
+    //     // check permission auth google
+    //     if (!(req.cookies['next-auth.session-token']) && (_.size(req.body) !== 4)) {
+    //         return {
+    //             EM: "Is not failed..!",
+    //             EC: -4,
+    //             DT: ""
+    //         }
+    //     }
+
+    //     console.log("check getRoles 333: ", req.user)
+
+    //     // let email = req.user.email
+    //     let roles = req.user?.groupWithRoles?.Roles ? req.user.groupWithRoles.Roles : [
+    //         {
+    //             "id": 21,
+    //             "url": "/vocal/by-user/read",
+    //             "description": ""
+    //         },
+    //         {
+    //             "id": 20,
+    //             "url": "/vocal/assign-to-user",
+    //             "description": ""
+    //         },
+    //         {
+    //             "id": 16,
+    //             "url": "/level/read",
+    //             "description": "view Level"
+    //         },
+    //         {
+    //             "id": 12,
+    //             "url": "/vocal/read",
+    //             "description": ""
+    //         }
+    //     ]
+    //     let currentUrl = req.path
+    //     if (!roles || roles.length === 0) {
+    //         return res.status(403).json({
+    //             EM: `You dont't permission to access this resource...`,
+    //             EC: -3,
+    //             DT: ''
+    //         })
+    //     }
+
+    //     let canAccess = roles.some(item => item.url === currentUrl || currentUrl.includes(item.url))
+
+    //     if (canAccess === true) {
+    //         next()
+    //     } else {
+    //         return res.status(403).json({
+    //             EM: `You dont't permission to access this resource...`,
+    //             EC: -2,
+    //             DT: ''
+    //         })
+    //     }
+    // } else {
+    //     return res.status(401).json({
+    //         EM: 'Not authentication the user Permission',
+    //         EC: -1,
+    //         DT: ''
+    //     })
+    // }
 }
 
 export {
