@@ -1,3 +1,4 @@
+require('dotenv').config()
 import loginRegisterService from '../../services/user/loginRegisterService'
 
 const handleTestApi = (req, res) => {
@@ -47,7 +48,12 @@ const handleApiLogin = async (req, res) => {
     try {
         let data = await loginRegisterService.handleUserLogin(req.body)
         if (data && data.DT && data.DT.access_token) {
-            res.cookie("jwt", data.DT.access_token, { secure: true, httpOnly: true, sameSite: 'none', maxAge: 60 * 60 * 1000 })
+            res.cookie("jwt", data.DT.access_token, { 
+                secure: process.env.NODE_ENV === 'production' ? true : false, 
+                httpOnly: true, 
+                sameSite: 'lax', 
+                maxAge: 60 * 60 * 1000 
+            })
         }
         return res.status(200).json({
             EM: data.EM, // error message
