@@ -49,7 +49,7 @@ const handleApiLogin = async (req, res) => {
         let data = await loginRegisterService.handleUserLogin(req.body)
         if (data && data.DT && data.DT.access_token) {
             res.cookie("jwt", data.DT.access_token, { 
-                secure: process.env.NODE_ENV === 'production' ? true : false, 
+                secure: true, // process.env.NODE_ENV === 'production' ? true : false, 
                 httpOnly: true, 
                 sameSite: 'none', 
                 maxAge: 60 * 60 * 1000 

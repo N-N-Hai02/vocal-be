@@ -40,6 +40,12 @@ const checkUserJWT = (req, res, next) => {
     // if (nonSecurePaths.includes(req.path) || req.path === '/admin/vocal/read' || req.path === '/vocalbulary/List') return next()
     if (nonSecurePaths.includes(req.path)) return next()
 
+    let cookieVocalGoogle = null
+
+    if (req.cookies['vocal-auth-google']) {
+        cookieVocalGoogle = JSON.parse(req.cookies['vocal-auth-google'])
+    }
+
     let cookies = req.cookies;
     let tokenFromHeader = extractToken(req)
 
@@ -50,7 +56,7 @@ const checkUserJWT = (req, res, next) => {
             req.user = decoded
             req.token = token
             next()
-        } else if (cookies[process.env.NAME_TOKEN_GOOGLE]) {
+        } else if (cookieVocalGoogle && (_.size(cookieVocalGoogle) === 4)) {
             next()
         } else {
             return res.status(401).json({
@@ -72,6 +78,12 @@ const checkUserPermission = async (req, res, next) => {
     // if (nonSecurePaths.includes(req.path) || req.path === '/user/account' || req.path === '/vocalbulary/List' || req.path === '/admin/vocal/read') return next();
     if (nonSecurePaths.includes(req.path) || req.path === '/user/account') return next()
 
+    let cookieVocalGoogle = null
+
+    if (req.cookies['vocal-auth-google']) {
+        cookieVocalGoogle = JSON.parse(req.cookies['vocal-auth-google'])
+    }
+
     if (req.user) {
         // let email = req.user.email
         let roles = req.user.groupWithRoles.Roles
@@ -79,7 +91,7 @@ const checkUserPermission = async (req, res, next) => {
         if (!roles || roles.length === 0) {
             return res.status(403).json({
                 EM: `You dont't permission to access this resource...`,
-                EC: -3,
+                EC: -5,
                 DT: ''
             })
         }
@@ -90,13 +102,12 @@ const checkUserPermission = async (req, res, next) => {
         } else {
             return res.status(403).json({
                 EM: `You dont't permission to access this resource...`,
-                EC: -2,
+                EC: -4,
                 DT: ''
             })
         }
-    } else if (req.cookies[process.env.NAME_TOKEN_GOOGLE]) {
+    } else if (cookieVocalGoogle && (_.size(cookieVocalGoogle) === 4)) {
         let getGroupVSRoles = await getGroupWithRoles({ groupId: 3 })
-
         let getRoles = getGroupVSRoles.reduce((accumulator, currentValue) => {
             accumulator.push(currentValue.Roles)
             return accumulator
@@ -112,7 +123,6 @@ const checkUserPermission = async (req, res, next) => {
         }
 
         let canAccess = getRoles.some(item => item.url === currentUrl || currentUrl.includes(item.url))
-
         if (canAccess === true) {
             next()
         } else {
