@@ -51,7 +51,7 @@ const handleApiLogin = async (req, res) => {
             res.cookie("jwt", data.DT.access_token, { 
                 secure: process.env.NODE_ENV === 'production' ? true : false, 
                 httpOnly: true, 
-                sameSite: 'lax', 
+                sameSite: 'none', 
                 maxAge: 60 * 60 * 1000 
             })
         }
