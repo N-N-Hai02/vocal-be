@@ -49,6 +49,10 @@ const checkUserJWT = (req, res, next) => {
     let cookies = req.cookies;
     let tokenFromHeader = extractToken(req)
 
+    let origin = req.get('origin')
+
+    console.log("Check req origin:: ", origin === process.env.REACT_URL)
+
     if ((cookies && cookies.jwt) || tokenFromHeader) {
         let token = cookies && cookies.jwt ? cookies.jwt : tokenFromHeader
         let decoded = verifyToken(token)
@@ -56,7 +60,7 @@ const checkUserJWT = (req, res, next) => {
             req.user = decoded
             req.token = token
             next()
-        } else if (cookieVocalGoogle && (_.size(cookieVocalGoogle) === 4)) {
+        } else if (origin === process.env.REACT_URL) {
             next()
         } else {
             return res.status(401).json({
@@ -84,6 +88,8 @@ const checkUserPermission = async (req, res, next) => {
         cookieVocalGoogle = JSON.parse(req.cookies['vocal-auth-google-sv'])
     }
 
+    let origin = req.get('origin')
+
     if (req.user) {
         // let email = req.user.email
         let roles = req.user.groupWithRoles.Roles
@@ -106,7 +112,7 @@ const checkUserPermission = async (req, res, next) => {
                 DT: ''
             })
         }
-    } else if (cookieVocalGoogle && (_.size(cookieVocalGoogle) === 4)) {
+    } else if (origin === process.env.REACT_URL) {
         let getGroupVSRoles = await getGroupWithRoles({ groupId: 3 })
         let getRoles = getGroupVSRoles.reduce((accumulator, currentValue) => {
             accumulator.push(currentValue.Roles)
