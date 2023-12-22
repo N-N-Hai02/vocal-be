@@ -42,8 +42,8 @@ const checkUserJWT = (req, res, next) => {
 
     let cookieVocalGoogle = null
 
-    if (req.cookies['vocal-auth-google']) {
-        cookieVocalGoogle = JSON.parse(req.cookies['vocal-auth-google'])
+    if (req.cookies['vocal-auth-google-sv']) {
+        cookieVocalGoogle = JSON.parse(req.cookies['vocal-auth-google-sv'])
     }
 
     let cookies = req.cookies;
@@ -80,8 +80,8 @@ const checkUserPermission = async (req, res, next) => {
 
     let cookieVocalGoogle = null
 
-    if (req.cookies['vocal-auth-google']) {
-        cookieVocalGoogle = JSON.parse(req.cookies['vocal-auth-google'])
+    if (req.cookies['vocal-auth-google-sv']) {
+        cookieVocalGoogle = JSON.parse(req.cookies['vocal-auth-google-sv'])
     }
 
     if (req.user) {
