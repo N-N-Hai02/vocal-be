@@ -230,6 +230,44 @@ const assignVocalToUser = async (data) => {
         }
     }
 }
+const deleteAssignVocalToUser = async (data) => {
+    try {
+        console.log("check data: ", data)
+        let UserVocal = await db.UserVocals.findOne({
+            where: { 
+                userId: data.userId,
+                vocalId: data.vocalId
+            }
+        })
+        console.log("check UserVocal: ", UserVocal)
+        if (UserVocal) {
+            await db.UserVocals.destroy({
+                where: { 
+                    userId: data.userId,
+                    vocalId: data.vocalId
+                }
+            })
+            return {
+                EM: "Un Assign vocal To User successfully!",
+                EC: 0,
+                DT: []
+            }
+        } else {
+            return {
+                EM: "Un Assign vocal not exits",
+                EC: 2,
+                DT: []
+            }
+        }
+    } catch (error) {
+        console.log(error)
+        return {
+            EM: 'error form services',
+            EC: 1,
+            DT: []
+        }
+    }
+}
 
 const getVocalByUser = async () => {
     try {
@@ -262,5 +300,6 @@ module.exports = {
     updateVocal, 
     deleteVocal, 
     assignVocalToUser,
-    getVocalByUser
+    getVocalByUser,
+    deleteAssignVocalToUser
 }

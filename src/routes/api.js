@@ -53,6 +53,7 @@ const initApiRoutes = (app) => {
     // user_vocal routes
     router.post('/vocal/assign-to-user', vocalController.assignVocalToUser)
     router.get('/vocal/by-user/read', vocalController.getVocalByUser)
+    router.delete('/vocal/delete-assign-to-user', vocalController.deleteAssignVocalToUser)
 
     return app.use("/api/v1", router)
 }

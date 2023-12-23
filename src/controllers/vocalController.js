@@ -114,6 +114,31 @@ const assignVocalToUser = async (req, res) => {
     }
 }
 
+const deleteAssignVocalToUser = async (req, res) => {
+    try {
+        let data = await vocalApiService.deleteAssignVocalToUser(req.body)
+        if (data && data.EC === 2) {
+            return res.status(200).json({
+                EM: data.EM, // error message
+                EC: data.EC, // error code
+                DT: data.DT,  // data
+            })
+        }
+        return res.status(200).json({
+            EM: data.EM, // error message
+            EC: data.EC, // error code
+            DT: data.DT,  // data
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            EM: 'error from server', // error message
+            EC: '-1', // error code
+            DT: '',  // data
+        })
+    }
+}
+
 const getVocalByUser = async (req, res) => {
     try {
         let data = await vocalApiService.getVocalByUser()
@@ -137,5 +162,6 @@ module.exports = {
     updateFunc,
     deleteFunc, 
     assignVocalToUser,
-    getVocalByUser
+    getVocalByUser,
+    deleteAssignVocalToUser
 }
