@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs'
 import { Op } from 'sequelize'
 import { getGroupWithRoles } from './JWTService'
 import { createJWT } from '../../middleware/JWTAction'
+import _ from 'lodash'
 
 const salt = bcrypt.genSaltSync(10);
 
@@ -97,6 +98,12 @@ const checkPassword = (inputPassword, hashPassword) => {
 
 const handleUserLogin = async (rawData) => {
     try {
+        if (rawData.id || (_.size(rawData) > 2)) {
+            return {
+                EM: 'Something wrongs error login',
+                EC: -3
+            }
+        }
         let user = await db.Users.findOne({
             where: {
                 [Op.or]: [
@@ -124,7 +131,8 @@ const handleUserLogin = async (rawData) => {
                 let payload = {
                     email: user.email,
                     groupWithRoles: dataGroupWithRoles,
-                    username: user.username
+                    username: user.username,
+                    id: user.id
                 }
                 let token = createJWT(payload)
                 return {
@@ -134,7 +142,8 @@ const handleUserLogin = async (rawData) => {
                         access_token: token,
                         groupWithRoles: dataGroupWithRoles,
                         email: user.email,
-                        username: user.username
+                        username: user.username,
+                        id: user.id
                     }
                 }
             }
