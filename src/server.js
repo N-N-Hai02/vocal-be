@@ -9,7 +9,7 @@ import configCors from "./config/cors"
 import cookieParser from "cookie-parser"
 
 const app = express()
-const PORT = process.env.PORT || 8081
+const PORT = 8082 // process.env.PORT || 8081
 
 // config Cors
 configCors(app)
