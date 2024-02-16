@@ -1,12 +1,12 @@
 require('dotenv').config(); // this is important!
 module.exports = {
   "development": {
-    "username": "postgres", // process.env.DB_USERNAME,
-    "password": "hai@123VocalAppmnbvcxz", // process.env.DB_PASSWORD,
-    "database": "postgres", // process.env.DB_DATABASE_NAME,
-    "host": "db.kbngeposzxnvbbnceppd.supabase.co", // process.env.DB_HOST,
-    "port": 5432, // process.env.DB_PORT,
-    "dialect": "postgres", // process.env.DB_DIALECT,
+    "username": process.env.DB_USERNAME,
+    "password": process.env.DB_PASSWORD,
+    "database": process.env.DB_DATABASE_NAME,
+    "host": process.env.DB_HOST,
+    "port": process.env.DB_PORT,
+    "dialect": process.env.DB_DIALECT,
     dialectOptions:
       process.env.DB_SSL === 'true' ?
         {

@@ -11,9 +11,9 @@ const db = {};
 let sequelize;
 
 const customizeConfig = {
-  host: "db.kbngeposzxnvbbnceppd.supabase.co", // process.env.DB_HOST,
-  port: 5432, // process.env.DB_PORT,
-  dialect: "postgres", // process.env.DB_DIALECT,
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  dialect: process.env.DB_DIALECT,
   dialectOptions:
     process.env.DB_SSL === 'true'
       ?
@@ -33,9 +33,9 @@ const customizeConfig = {
 
 
 sequelize = new Sequelize(
-  "postgres", // process.env.DB_DATABASE_NAME,
-  "postgres",// process.env.DB_USERNAME,
-  "hai@123VocalAppmnbvcxz", // process.env.DB_PASSWORD,
+  process.env.DB_DATABASE_NAME,
+  process.env.DB_USERNAME,
+  process.env.DB_PASSWORD,
   customizeConfig
 )
 
