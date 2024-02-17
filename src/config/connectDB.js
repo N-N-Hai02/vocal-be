@@ -64,7 +64,8 @@ sequelize = NODE_ENV === "production"
         }
     )
     : new Sequelize(
-        `postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_DATABASE_NAME}`,
+        // `postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_DATABASE_NAME}`,
+        `postgres://postgres.kbngeposzxnvbbnceppd:${DB_PASSWORD}@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres`,
         { logging: false, native: false }
     );
 
